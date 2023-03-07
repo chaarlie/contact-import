@@ -16,13 +16,13 @@ This is a web app to import contacts from .csv files following a specified forma
 4. Move to  **./frontend**  and run ``npm install``
 5. Edit the **env.example** file with **PORT**
 6. Edit the **proxy** variable in **package.json** with server URL
-5. Run ``npm start`` and localhost should open in the browser
+7. Run ``npm start`` and localhost should open in the browser
 
 ## Instructions use the app
 
 1. First create an account 
 2. Login with existing user 
-3. Upload a .csv with column names **matching the input controls**
+3. Upload a .csv with column names like **sample.csv** 
 
 ## Instructions to Test
 
