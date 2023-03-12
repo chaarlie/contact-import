@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { isEmail } from 'class-validator';
-import lookupImport = require('binlookup');
+
 import { DataSource } from 'typeorm';
 import { ContactService } from '../../contact/service/contact.service';
 import { CsvImportDto } from '../../lib/dtos/csv-import.dto';
@@ -9,10 +9,12 @@ import ImportFile, {
   ImportStatus,
 } from '../../lib/entities/import-file.entity';
 import ImportLog from '../../lib/entities/import-log.entity';
-import { CsvContact, User } from '../../lib/types/types';
+import { CsvContact } from '../../lib/types/types';
 import { UserService } from '../../user/services/user.service';
-
-const lookup = lookupImport();
+import { CsvContactDto } from '../../lib/dtos/csv-contact.dto';
+import { ContactErrorLogDto } from '../../lib/dtos/contact-error-log.dto';
+import { ValidCreditCardProducer } from '../../queue/producers/valid-credit-card.producer';
+import User from '../../lib/entities/user.entity';
 
 @Injectable()
 export class ContactsImportService {
@@ -20,72 +22,38 @@ export class ContactsImportService {
     private dataSource: DataSource,
     private userService: UserService,
     private contactService: ContactService,
+    private validCreditCardProducer: ValidCreditCardProducer,
   ) {}
 
-  verifyContactValidations(contact: CsvContact) {
-    return new Promise((resolve, reject) => {
-      try {
-        this.isValidAddress(contact.address);
-        this.isValidPhone(contact.phone);
-        this.isValidDateOfBirth(contact.birth);
-        this.isValidUsername(contact.username);
-        this.isValidAddress(contact.address);
-        this.isValidEmail(contact.email);
+  verifyContactValidations(contact: CsvContact): void {
+    this.isValidAddress(contact.address);
+    this.isValidPhone(contact.phone);
+    this.isValidDateOfBirth(contact.birth);
+    this.isValidUsername(contact.username);
+    this.isValidEmail(contact.email);
+  }
 
-        resolve(contact);
-      } catch (error) {
-        reject(error);
+  async saveContacts(contacts: CsvContactDto[]): Promise<void> {
+    this.dataSource.transaction(async () => {
+      const savedContacts = await this.dataSource
+        .createQueryBuilder()
+        .insert()
+        .into(Contact)
+        .values(contacts)
+        .execute();
+
+      if (savedContacts.generatedMaps.length > 0) {
+        const { importFile } = contacts[0];
+        importFile.status = ImportStatus.Finished;
+        await this.dataSource.getRepository(ImportFile).save(importFile);
       }
     });
   }
 
-  saveContact(reqUser: User, csvImportDto: CsvImportDto): Promise<void> {
-    return this.dataSource.transaction(async () => {
-      const user = await this.userService.findByUserName(reqUser.username);
-      let importFile = null;
-
-      try {
-        importFile = await this.dataSource.getRepository(ImportFile).save({
-          fileName: csvImportDto.fileName,
-          user,
-          status: ImportStatus.OnHold,
-        });
-        importFile.status = ImportStatus.Processing;
-        importFile = await this.dataSource
-          .getRepository(ImportFile)
-          .save(importFile);
-
-        const contacts = await this.getValidContacts(
-          importFile,
-          user,
-          csvImportDto.contacts,
-        );
-
-        await this.dataSource
-          .createQueryBuilder()
-          .insert()
-          .into(Contact)
-          .values(contacts)
-          .execute();
-
-        await this.dataSource.getRepository(ImportFile).save({
-          ...importFile,
-          status: ImportStatus.Finished,
-        });
-      } catch (error) {
-        if (!importFile) {
-          await this.dataSource.getRepository(ImportFile).save({
-            fileName: csvImportDto.fileName,
-            user,
-            status: ImportStatus.Failed,
-          });
-        } else {
-          importFile.status = ImportStatus.Failed;
-          await this.dataSource.getRepository(ImportFile).save(importFile);
-        }
-        new HttpException(error.message, HttpStatus.BAD_REQUEST);
-      }
-    });
+  async saveContactErrorLog(
+    contactErrorLogs: ContactErrorLogDto[],
+  ): Promise<ImportLog[]> {
+    return this.dataSource.getRepository(ImportLog).save(contactErrorLogs);
   }
 
   isValidUsername(username: string): boolean {
@@ -127,7 +95,7 @@ export class ContactsImportService {
     return emailSet;
   }
 
-  async isNotAlreadySavedEmail(email: string, user): Promise<boolean> {
+  async isNotAlreadySavedEmail(email: string, user: User): Promise<boolean> {
     const previouslySavedContact = await this.contactService.findByEmail(
       email,
       user,
@@ -149,47 +117,72 @@ export class ContactsImportService {
     return this.verifyEmailDuplication(email, emailSet);
   }
 
-  async getCardNetwork(card: string): Promise<any> {
-    const response = await lookup(card);
-    if (!response) throw new Error(`Invalid card ${card}`);
-    return response.brand ? response.brand : response.scheme;
-  }
+  public async processImportedContacts(
+    requestUser: User,
+    { contacts, fileName }: CsvImportDto,
+  ): Promise<void> {
+    this.dataSource.transaction(async () => {
+      let emailSet = new Set<string>();
+      let importFile = null;
+      let user = null;
+      const validContact = null;
+      const validContacts = [];
+      const contactErrorLogs = [];
 
-  public async getValidContacts(
-    importFile: ImportFile,
-    user,
-    contacts: CsvContact[],
-  ): Promise<CsvContact[]> {
-    const validContacts = [];
-    let emailSet = new Set<string>();
-
-    for (const contact of contacts) {
       try {
-        await this.verifyContactValidations(contact);
+        user = await this.userService.findByUserName(requestUser.username);
 
-        contact.creditCardNetwork = await this.getCardNetwork(
-          contact.creditCardNumber,
-        );
-        contact.creditCardNumber = this.contactService.encryptCard(
-          contact.creditCardNumber,
-        );
-
-        emailSet = await this.verifyNoEmailDuplicate(
-          contact.email,
-          emailSet,
+        importFile = await this.dataSource.getRepository(ImportFile).save({
+          fileName,
           user,
-        );
+          status: ImportStatus.OnHold,
+        });
 
-        validContacts.push({ ...contact, user, importFile });
-      } catch ({ message }) {
-        await this.dataSource
-          .getRepository(ImportLog)
-          .save({ message, user, importFile });
+        for (const contact of contacts) {
+          try {
+            this.verifyContactValidations(contact);
+
+            validContacts.push({ ...contact, user, importFile });
+
+            emailSet = await this.verifyNoEmailDuplicate(
+              validContact.email,
+              emailSet,
+              user,
+            );
+          } catch (error) {
+            contactErrorLogs.push({ message: error.message, user, importFile });
+          }
+        }
+
+        if (contactErrorLogs.length > 0) {
+          await this.saveContactErrorLog(contactErrorLogs);
+        }
+
+        if (validContacts.length === 0) {
+          throw new Error('No contact could be imported');
+        }
+
+        importFile.status = ImportStatus.Processing;
+        importFile = await this.dataSource
+          .getRepository(ImportFile)
+          .save(importFile);
+
+        this.validCreditCardProducer.addContacts(validContacts);
+      } catch (error) {
+        console.error(error);
+
+        if (!importFile) {
+          await this.dataSource.getRepository(ImportFile).save({
+            fileName,
+            user,
+            status: ImportStatus.Failed,
+          });
+        } else {
+          importFile.status = ImportStatus.Failed;
+          await this.dataSource.getRepository(ImportFile).save(importFile);
+        }
+        new HttpException(error.message, HttpStatus.BAD_REQUEST);
       }
-    }
-    if (validContacts.length === 0) {
-      throw new Error('No contact could be imported');
-    }
-    return validContacts;
+    });
   }
 }

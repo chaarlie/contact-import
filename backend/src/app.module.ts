@@ -13,6 +13,7 @@ import { ContactsImportModule } from './contacts-import/contacts-import.module';
 import { ContactsImportController } from './contacts-import/controllers/contacts-import.controller';
 import { ContactService } from './contact/service/contact.service';
 import { ContactModule } from './contact/contact.module';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ContactModule } from './contact/contact.module';
     UserModule,
     ContactsImportModule,
     ContactModule,
+    QueueModule,
   ],
   controllers: [ContactsImportController, UserController],
   providers: [ContactsImportService, UserService, ContactService],

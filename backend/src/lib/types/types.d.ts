@@ -8,7 +8,7 @@ export interface CsvContact {
   email: string;
 }
 
-export interface User {
+export interface AppUser {
   username: string;
   password: string;
 }

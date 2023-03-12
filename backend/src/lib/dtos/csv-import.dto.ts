@@ -1,6 +1,6 @@
 import { CsvContact } from '../types/types';
 
-export class CsvImportDto {
+export interface CsvImportDto {
   contacts: CsvContact[];
   fileName: string;
 }

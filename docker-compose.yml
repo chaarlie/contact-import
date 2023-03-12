@@ -10,7 +10,17 @@ services:
     environment:
       - POSTGRES_PASSWORD=$DB_PASSWORD
       - POSTGRES_DB=$DB_NAME
-  
+  cache:
+    container_name: redis
+    image: redis:alpine
+    restart: always
+    ports:
+      - $CACHE_PORT:$CACHE_PORT
+    command: redis-server --save 20 1 --loglevel warning 
+    volumes: 
+      - cache:/data
+    environment:
+      - CACHE_PORT=$CACHE_PORT
   api:
     container_name: api
     restart: always
@@ -25,8 +35,13 @@ services:
       - DB_NAME=$DB_NAME
       - DB_PASSWORD=$DB_PASSWORD
       - DB_PORT=$DB_PORT
+      - CACHE_PORT=$CACHE_PORT
+      - REDIS_HOST=$REDIS_HOST
     depends_on:
       - postgresdb
+      - cache
 
 volumes:
   data: {}
+  cache:
+    driver: local

@@ -37,6 +37,9 @@ export class ContactsImportController {
     csvImportDto: CsvImportDto,
     @Req() req,
   ) {
-    return this.contactsImportService.saveContact(req.user, csvImportDto);
+    return this.contactsImportService.processImportedContacts(
+      req.user,
+      csvImportDto,
+    );
   }
 }
