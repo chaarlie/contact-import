@@ -14,6 +14,8 @@ import { ContactsImportController } from './contacts-import/controllers/contacts
 import { ContactService } from './contact/service/contact.service';
 import { ContactModule } from './contact/contact.module';
 import { QueueModule } from './queue/queue.module';
+import { WebSocketModule } from './websocket/websocket.module';
+import { SocketGateway } from './websocket/gateways/socket.gateway';
 
 @Module({
   imports: [
@@ -28,8 +30,14 @@ import { QueueModule } from './queue/queue.module';
     ContactsImportModule,
     ContactModule,
     QueueModule,
+    WebSocketModule,
   ],
   controllers: [ContactsImportController, UserController],
-  providers: [ContactsImportService, UserService, ContactService],
+  providers: [
+    ContactsImportService,
+    UserService,
+    ContactService,
+    SocketGateway,
+  ],
 })
 export class AppModule {}

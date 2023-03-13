@@ -15,6 +15,7 @@ import { CsvContactDto } from '../../lib/dtos/csv-contact.dto';
 import { ContactErrorLogDto } from '../../lib/dtos/contact-error-log.dto';
 import { ValidCreditCardProducer } from '../../queue/producers/valid-credit-card.producer';
 import User from '../../lib/entities/user.entity';
+import { SocketGateway } from '../../websocket/gateways/socket.gateway';
 
 @Injectable()
 export class ContactsImportService {
@@ -23,6 +24,7 @@ export class ContactsImportService {
     private userService: UserService,
     private contactService: ContactService,
     private validCreditCardProducer: ValidCreditCardProducer,
+    private socketGateway: SocketGateway,
   ) {}
 
   verifyContactValidations(contact: CsvContact): void {
@@ -46,6 +48,13 @@ export class ContactsImportService {
         const { importFile } = contacts[0];
         importFile.status = ImportStatus.Finished;
         await this.dataSource.getRepository(ImportFile).save(importFile);
+
+        const contactData = contacts.map((contact) => {
+          const { creditCardNumber, user, importFile, ...rest } = contact;
+          return rest;
+        });
+
+        this.socketGateway.sendContacts(contactData);
       }
     });
   }

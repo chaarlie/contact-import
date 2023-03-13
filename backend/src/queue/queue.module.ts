@@ -5,6 +5,7 @@ import { ContactService } from '../contact/service/contact.service';
 import { ContactsImportService } from '../contacts-import/services/contacts-import.service';
 import { QUEUES } from '../lib/enums/queues.enum';
 import { UserService } from '../user/services/user.service';
+import { SocketGateway } from '../websocket/gateways/socket.gateway';
 import { ValidCreditCardConsumer } from './consumers/valid-credit-card.consumer';
 import { ValidCreditCardProducer } from './producers/valid-credit-card.producer';
 
@@ -29,6 +30,7 @@ import { ValidCreditCardProducer } from './producers/valid-credit-card.producer'
     ContactsImportService,
     ValidCreditCardConsumer,
     ValidCreditCardProducer,
+    SocketGateway,
   ],
   exports: [ValidCreditCardConsumer, ValidCreditCardProducer],
 })
