@@ -151,13 +151,13 @@ export class ContactsImportService {
           try {
             this.verifyContactValidations(contact);
 
-            validContacts.push({ ...contact, user, importFile });
-
             emailSet = await this.verifyNoEmailDuplicate(
-              validContact.email,
+              contact.email,
               emailSet,
               user,
             );
+
+            validContacts.push({ ...contact, user, importFile });
           } catch (error) {
             contactErrorLogs.push({ message: error.message, user, importFile });
           }
