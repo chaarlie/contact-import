@@ -7,9 +7,9 @@ export class SocketGateway {
   @WebSocketServer()
   webSocketServer: Server;
 
-  sendContacts(
-    contacts: Omit<CsvContactDto, 'creditCardNumber' | 'user' | 'importFile'>[],
+  sendImportFileStatus(
+    importFileStatus: string,
   ) {
-    this.webSocketServer.emit('contacts', contacts);
+    this.webSocketServer.emit('import-file-status', importFileStatus);
   }
 }

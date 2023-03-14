@@ -49,12 +49,7 @@ export class ContactsImportService {
         importFile.status = ImportStatus.Finished;
         await this.dataSource.getRepository(ImportFile).save(importFile);
 
-        const contactData = contacts.map((contact) => {
-          const { creditCardNumber, user, importFile, ...rest } = contact;
-          return rest;
-        });
-
-        this.socketGateway.sendContacts(contactData);
+        this.socketGateway.sendImportFileStatus(importFile.status);
       }
     });
   }
@@ -134,7 +129,6 @@ export class ContactsImportService {
       let emailSet = new Set<string>();
       let importFile = null;
       let user = null;
-      const validContact = null;
       const validContacts = [];
       const contactErrorLogs = [];
 
@@ -190,6 +184,8 @@ export class ContactsImportService {
           importFile.status = ImportStatus.Failed;
           await this.dataSource.getRepository(ImportFile).save(importFile);
         }
+        this.socketGateway.sendImportFileStatus(importFile.status);
+
         new HttpException(error.message, HttpStatus.BAD_REQUEST);
       }
     });

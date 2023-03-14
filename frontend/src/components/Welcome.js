@@ -1,18 +1,20 @@
-import React, { useContext, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import axios from "axios";
+import { io } from "socket.io-client";
+import { Link } from "react-router-dom";
 
 import ContactHeader from "./ContactHeader";
 import Notification from "./Notification";
 import Navigation from "./Navigation";
+import ProcessedFileNotification from "./ProcessedFileNotification";
 import { GlobalContext } from "../context/GlobalState";
-
-import axios from "axios";
 
 const Welcome = () => {
   const { loggedInUser, token } = useContext(GlobalContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadError, setUploadError] = useState("");
   const [isUploadFinished, setIsUploadFinished] = useState(false);
+  const [importFileStatus, setImportFileStatus] = useState(null);
   const [columnHeader, setColumnHeader] = useState({
     username: "username",
     birth: "birth",
@@ -38,11 +40,7 @@ const Welcome = () => {
       };
 
       try {
-        await axios.post(
-          "/contacts-import",
-          formData,
-          config
-        );
+        await axios.post("/contacts-import", formData, config);
 
         setUploadError(null);
 
@@ -71,6 +69,12 @@ const Welcome = () => {
       };
     });
   };
+
+  useEffect(() => {
+    let socket = io();
+    socket.on("import-file-status", (status) => setImportFileStatus(status));
+  }, []);
+
   return (
     <div className="text-center">
       <div className="d-flex justify-content-between">
@@ -119,10 +123,7 @@ const Welcome = () => {
             {uploadError ? (
               <Notification message={uploadError} type="alert-danger" />
             ) : (
-              <Notification
-                message={"upload successful"}
-                type="alert-success"
-              />
+              <ProcessedFileNotification status={importFileStatus} />
             )}
           </>
         )}

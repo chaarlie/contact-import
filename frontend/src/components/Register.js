@@ -18,14 +18,17 @@ const Welcome = () => {
   };
   const handleRegisterSubmit = async (event) => {
     event.preventDefault();
-  
+
     const data = { username, password };
     if (username && password) {
       try {
         const response = await axios.post("/user", data);
         setServerResponse(response);
       } catch (error) {
-        setError({ message: error.message, status: error.status });
+        setError({
+          message: error.response.data.message,
+          status: error.response.data.statusCode,
+        });
       }
     }
   };
@@ -76,12 +79,12 @@ const Welcome = () => {
             </button>
           </Link>
         </div>
-     
+
         <>
           {!!error && (
             <Notification
               message={error.message}
-              statusCode={error.statusCode}
+              statusCode={error.status}
               type="alert-danger"
             />
           )}
@@ -94,7 +97,6 @@ const Welcome = () => {
             />
           )}
         </>
-      
       </div>
     </div>
   );
