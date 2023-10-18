@@ -4,15 +4,15 @@ import { useContext } from "react";
 
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-import Login from "./components/Login";
-import Welcome from "./components/Welcome";
-import Account from "./components/Account";
+import Login from "./components/login/Login";
+import Welcome from "./components/welcome/Welcome";
+import Account from "./components/account/Account";
 import { GlobalContext } from "./context/GlobalState";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Contacts from "./components/Contacts";
-import FailedContacts from "./components/FailedContacts";
-import ProcessedFiles from "./components/ProcessedFiles";
-import Register from "./components/Register";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import Contacts from "./components/contacts/Contacts";
+import FailedContacts from "./components/contacts/FailedContacts";
+import ProcessedFiles from "./components/processed-files/ProcessedFiles";
+import Register from "./components/register/Register";
 
 function App() {
   const { loggedInUser } = useContext(GlobalContext);

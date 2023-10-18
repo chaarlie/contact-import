@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-import Notification from "./Notification";
-import axiosConfig from "../config/axios";
+import Notification from "../notification/Notification";
+import axiosConfig from "../../config/axios";
 
 const Welcome = () => {
   const [username, setUsername] = useState("");

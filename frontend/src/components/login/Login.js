@@ -2,10 +2,10 @@ import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-import ErrorMessage from "./ErrorMessage";
+import ErrorMessage from "../common/ErrorMessage";
 import LoginButton from "./LoginButton";
-import axiosConfig from "../config/axios";
-import { GlobalContext } from "../context/GlobalState";
+import axiosConfig from "../../config/axios";
+import { GlobalContext } from "../../context/GlobalState";
 
 const Login = () => {
   const { loginUser, setToken } = useContext(GlobalContext);

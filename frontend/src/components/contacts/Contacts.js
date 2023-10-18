@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import axiosConfig from "../config/axios";
+import axiosConfig from "../../config/axios";
 import ContactHeader from "./ContactHeader";
-import Navigation from "./Navigation";
-import { GlobalContext } from "../context/GlobalState";
+import Navigation from "../navigation/Navigation";
+import { GlobalContext } from "../../context/GlobalState";
 
 const Contacts = () => {
   const { token } = useContext(GlobalContext);

@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 
-import axiosConfig from "../config/axios";
-import Navigation from "./Navigation";
-import { GlobalContext } from "../context/GlobalState";
+import axiosConfig from "../../config/axios";
+import Navigation from "../navigation/Navigation";
+import { GlobalContext } from "../../context/GlobalState";
 
 const ProcessedFiles = () => {
   const { token } = useContext(GlobalContext);

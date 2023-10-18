@@ -2,12 +2,12 @@ import React, { useContext, useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { Link } from "react-router-dom";
 
-import ContactHeader from "./ContactHeader";
-import Notification from "./Notification";
-import Navigation from "./Navigation";
-import ProcessedFileNotification from "./ProcessedFileNotification";
-import axiosConfig from "../config/axios";
-import { GlobalContext } from "../context/GlobalState";
+import ContactHeader from "../contacts/ContactHeader";
+import Notification from "../notification/Notification";
+import Navigation from "../navigation/Navigation";
+import ProcessedFileNotification from "../notification/ProcessedFileNotification";
+import axiosConfig from "../../config/axios";
+import { GlobalContext } from "../../context/GlobalState";
 
 const Welcome = () => {
   const { loggedInUser, token } = useContext(GlobalContext);

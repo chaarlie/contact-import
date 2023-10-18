@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import axiosConfig from "../config/axios";
-import Navigation from "./Navigation";
-import { GlobalContext } from "../context/GlobalState";
+import axiosConfig from "../../config/axios";
+import Navigation from "../navigation/Navigation";
+import { GlobalContext } from "../../context/GlobalState";
 
 const FailedContacts = () => {
   const { token } = useContext(GlobalContext);
