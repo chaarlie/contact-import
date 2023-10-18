@@ -78,7 +78,7 @@ const Contacts = () => {
         <div>
           <Link to="/failed-contacts">
             {" "}
-            <button type="button" class="btn btn-link">
+            <button type="button" className="btn btn-link">
               Go to Failed Contacts
             </button>
           </Link>

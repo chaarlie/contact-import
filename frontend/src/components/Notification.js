@@ -5,7 +5,7 @@ const Notification = ({ message, type, statusCode, children }) => {
   return (
     <div className="d-flex mt-5 justify-content-between">
       <div classNames="badge badge-primary text-wrap ">
-        <p class="h5 mt-3 ">Status code {statusCode}</p>
+        <p className="h5 mt-3 ">Status code {statusCode}</p>
       </div>
       <div className={classNames} role="alert">
         <h4>{message ? <pre>{message}</pre> : <pre>{children}</pre>}</h4>

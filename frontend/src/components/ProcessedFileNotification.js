@@ -9,10 +9,10 @@ const ProcessedFileNotification = ({ status }) => {
   return (
     <>
       {isStatusNotSet ? (
-        <div class="d-flex align-items-center alert alert-secondary">
+        <div className="d-flex align-items-center alert alert-secondary">
           <strong>Loading...</strong>
           <div
-            class="spinner-border ml-auto"
+            className="spinner-border ml-auto"
             role="status"
             aria-hidden="true"
           ></div>

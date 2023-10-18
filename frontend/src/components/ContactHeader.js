@@ -7,7 +7,7 @@ const ContactHeader = ({ editable, columnHeader, modifyHeaderName }) => {
       <tr>
         {headerNames.length > 0 &&
           headerNames.map((headerName) => (
-            <th class="th-sm">
+            <th className="th-sm">
               {editable ? (
                 <input
                   onChange={modifyHeaderName}

@@ -94,7 +94,7 @@ const Login = () => {
 
         <div>
           <Link to="/register">
-            <button type="button" class="btn btn-link">
+            <button type="button" className="btn btn-link">
               Register
             </button>
           </Link>

@@ -32,7 +32,7 @@ const FailedContacts = () => {
       <div>
         <Link to="/processed-files">
           {" "}
-          <button type="button" class="btn btn-link">
+          <button type="button" className="btn btn-link">
             Go to Processed Files
           </button>
         </Link>

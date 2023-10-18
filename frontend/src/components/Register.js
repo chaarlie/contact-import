@@ -74,7 +74,7 @@ const Welcome = () => {
         </form>
         <div>
           <Link to="/login">
-            <button type="button" class="btn btn-link">
+            <button type="button" className="btn btn-link">
               Login
             </button>
           </Link>
