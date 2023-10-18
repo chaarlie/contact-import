@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 
-import { GlobalContext } from "../context/GlobalState";
+import axiosConfig from "../config/axios";
 import ContactHeader from "./ContactHeader";
 import Navigation from "./Navigation";
+import { GlobalContext } from "../context/GlobalState";
 
 const Contacts = () => {
   const { token } = useContext(GlobalContext);
@@ -25,7 +25,7 @@ const Contacts = () => {
     const config = {
       headers: { Authorization: `Bearer ${token}` },
     };
-    return axios.get(
+    return axiosConfig.get(
       `user/import-contact-list?page=${index}`,
       config
     );

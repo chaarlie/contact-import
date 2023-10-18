@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import axios from "axios";
 import { io } from "socket.io-client";
 import { Link } from "react-router-dom";
 
@@ -7,6 +6,7 @@ import ContactHeader from "./ContactHeader";
 import Notification from "./Notification";
 import Navigation from "./Navigation";
 import ProcessedFileNotification from "./ProcessedFileNotification";
+import axiosConfig from "../config/axios";
 import { GlobalContext } from "../context/GlobalState";
 
 const Welcome = () => {
@@ -40,7 +40,7 @@ const Welcome = () => {
       };
 
       try {
-        await axios.post("/contacts-import", formData, config);
+        await axiosConfig.post("/contacts-import", formData, config);
 
         setUploadError(null);
 

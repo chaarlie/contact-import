@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
-import axios from "axios";
 
-import { GlobalContext } from "../context/GlobalState";
+import axiosConfig from "../config/axios";
 import Navigation from "./Navigation";
+import { GlobalContext } from "../context/GlobalState";
 
 const ProcessedFiles = () => {
   const { token } = useContext(GlobalContext);
@@ -13,8 +13,7 @@ const ProcessedFiles = () => {
       headers: { Authorization: `Bearer ${token}` },
     };
 
-    axios
-      .get("/user/processed-file-list", config)
+    axiosConfig.get("/user/processed-file-list", config)
       .then((response) => {
         setProcessedFiles(response.data[0].importFiles);
       });

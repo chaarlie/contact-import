@@ -1,10 +1,10 @@
-import axios from "axios";
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 import ErrorMessage from "./ErrorMessage";
 import LoginButton from "./LoginButton";
+import axiosConfig from "../config/axios";
 import { GlobalContext } from "../context/GlobalState";
 
 const Login = () => {
@@ -21,8 +21,9 @@ const Login = () => {
     e.preventDefault();
 
     setLoading(true);
+
     try {
-      const result = await axios.post("/user/auth/login", {
+      const result = await axiosConfig.post("/user/auth/login", {
         username,
         password,
       });
@@ -31,8 +32,8 @@ const Login = () => {
         headers: { Authorization: `Bearer ${result.data.access_token}` },
       };
 
-      const profileResponse = await axios.get(
-        "http://localhost:3000/user/profile",
+      const profileResponse = await axiosConfig.get(
+        "/user/profile",
         config
       );
 

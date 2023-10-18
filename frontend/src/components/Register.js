@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 
 import Notification from "./Notification";
+import axiosConfig from "../config/axios";
 
 const Welcome = () => {
   const [username, setUsername] = useState("");
@@ -22,7 +22,7 @@ const Welcome = () => {
     const data = { username, password };
     if (username && password) {
       try {
-        const response = await axios.post("/user", data);
+        const response = await axiosConfig.post("/user", data);
         setServerResponse(response);
       } catch (error) {
         setError({

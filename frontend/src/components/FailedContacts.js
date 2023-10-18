@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 
-import { GlobalContext } from "../context/GlobalState";
+import axiosConfig from "../config/axios";
 import Navigation from "./Navigation";
+import { GlobalContext } from "../context/GlobalState";
 
 const FailedContacts = () => {
   const { token } = useContext(GlobalContext);
@@ -14,7 +14,7 @@ const FailedContacts = () => {
       headers: { Authorization: `Bearer ${token}` },
     };
 
-    axios
+    axiosConfig
       .get("/user/failed-contact-list", config)
       .then((response) => {
         setFailedContacts(response.data[0].importLogs);
