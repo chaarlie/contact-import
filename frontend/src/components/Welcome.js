@@ -99,11 +99,13 @@ const Welcome = () => {
 
         <Navigation />
 
-        <ContactHeader
-          editable={true}
-          modifyHeaderName={modifyHeaderName}
-          columnHeader={columnHeader}
-        ></ContactHeader>
+        <table>
+          <ContactHeader
+            editable={true}
+            modifyHeaderName={modifyHeaderName}
+            columnHeader={columnHeader}
+          />
+        </table>
 
         <form onSubmit={handleFileUpload}>
           <div className="form-group">

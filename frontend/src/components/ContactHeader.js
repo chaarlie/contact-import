@@ -6,8 +6,8 @@ const ContactHeader = ({ editable, columnHeader, modifyHeaderName }) => {
     <thead>
       <tr>
         {headerNames.length > 0 &&
-          headerNames.map((headerName) => (
-            <th className="th-sm">
+          headerNames.map((headerName, index) => (
+            <th key={index} className="th-sm">
               {editable ? (
                 <input
                   onChange={modifyHeaderName}
@@ -18,7 +18,7 @@ const ContactHeader = ({ editable, columnHeader, modifyHeaderName }) => {
               ) : (
                 <>{headerName}</>
               )}
-            </th>
+            </th>             
           ))}
       </tr>
     </thead>
