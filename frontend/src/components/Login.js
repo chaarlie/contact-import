@@ -3,6 +3,8 @@ import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 
+import ErrorMessage from "./ErrorMessage";
+import LoginButton from "./LoginButton";
 import { GlobalContext } from "../context/GlobalState";
 
 const Login = () => {
@@ -15,33 +17,9 @@ const Login = () => {
 
   const history = useHistory();
 
-  const LoginButton = (props) => {
-    const { disabled, text, handleLogin } = props;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    return (
-      <button
-        disabled={disabled}
-        name="submit"
-        type="submit"
-        className="btn btn-primary form-control"
-        onClick={(e) => handleLogin()}
-      >
-        {text}
-      </button>
-    );
-  };
-
-  const ErrorMessage = ({ errors }) => {
-    return (
-      <div className="alert alert-danger" role="alert">
-        {errors.map((msg, i) => (
-          <p key={i}>{msg}</p>
-        ))}
-      </div>
-    );
-  };
-
-  const handleLogin = async () => {
     setLoading(true);
     try {
       const result = await axios.post("/user/auth/login", {
@@ -78,7 +56,7 @@ const Login = () => {
       <div className="col-6  ">
         {errors.length > 0 && <ErrorMessage errors={errors} />}
         <h3>Sign In </h3>
-        <form>
+        <form onSubmit={ (e) => { handleSubmit(e) }}>
           <div className="form-group">
             <label htmlFor="username">Email address or Username</label>
             <input
@@ -106,11 +84,10 @@ const Login = () => {
               <LoginButton text={"Loading..."} />
             ) : (
               <LoginButton
-                handleLogin={handleLogin}
                 disabled={!(!!username && !!password)}
                 text={"Submit"}
               />
-            )}
+              )} 
           </div>
         </form>
 
